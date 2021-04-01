@@ -11,7 +11,7 @@
 # Вычислите R2 полученных предказаний с помощью r2_score из модуля sklearn.metrics.
 # 
 
-# In[4]:
+# In[125]:
 
 
 import numpy as np
@@ -21,7 +21,47 @@ from sklearn.datasets import load_boston
 
 boston = load_boston()
 
-boston.keys()
+
+# In[126]:
+
+
+from sklearn.model_selection import train_test_split
+
+feature_names = boston["feature_names"]
+X = pd.DataFrame(boston["data"], columns=feature_names)
+y = pd.DataFrame(boston['target'], columns=["price"])
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+
+# In[110]:
+
+
+from sklearn.linear_model import LinearRegression
+
+
+# In[115]:
+
+
+lr = LinearRegression()
+
+
+# In[116]:
+
+
+lr.fit(X_train, y_train)
+
+
+# In[133]:
+
+
+y_pred = lr.predict(X_test)
+
+
+# In[134]:
+
+
+from sklearn.metrics import r2_score
+r2_score(y_test, y_pred)
 
 
 # ### Задание 2
@@ -35,10 +75,41 @@ boston.keys()
 # Сделайте предсказание на тестовых данных и посчитайте R2. Сравните с результатом из предыдущего задания.
 # Напишите в комментариях к коду, какая модель в данном случае работает лучше.
 
-# In[ ]:
+# In[136]:
 
 
+from sklearn.ensemble import RandomForestRegressor
 
+
+# In[139]:
+
+
+model = RandomForestRegressor(n_estimators=1000, max_depth=12, random_state=42)
+
+
+# In[143]:
+
+
+model.fit(X_train, y_train.values[:,0])
+
+
+# In[146]:
+
+
+y_pred1 = model.predict(X_test)
+
+
+# In[147]:
+
+
+from sklearn.metrics import r2_score
+r2_score(y_test, y_pred1)
+
+
+# In[152]:
+
+
+# Модель RandomForestRegressor отработала лучше линейной регрессии
 
 
 # ### *Задание 3
@@ -47,6 +118,25 @@ boston.keys()
 # С помощью этого атрибута найдите сумму всех показателей важности,
 # установите, какие два признака показывают наибольшую важность.
 # 
+
+# In[160]:
+
+
+model.feature_importances_
+
+
+# In[162]:
+
+
+model.feature_importances_.sum()
+
+
+# In[175]:
+
+
+A = pd.DataFrame([model.feature_importances_], columns=feature_names)
+A.head()
+
 
 # In[ ]:
 
@@ -110,7 +200,7 @@ boston.keys()
 # ### *Дополнительные задания:
 # 1). Загрузите датасет Wine из встроенных датасетов sklearn.datasets с помощью функции load_wine в переменную data.
 
-# In[34]:
+# In[2]:
 
 
 import numpy as np
@@ -123,7 +213,7 @@ data.keys()
 # ###### 2). 
 # Полученный датасет не является датафреймом. Это структура данных, имеющая ключи аналогично словарю. Просмотрите тип данных этой структуры данных и создайте список data_keys, содержащий ее ключи.
 
-# In[44]:
+# In[3]:
 
 
 data_keys = list(data.keys())
@@ -133,10 +223,10 @@ data_keys
 # #### 3). 
 # Просмотрите данные, описание и названия признаков в датасете. Описание нужно вывести в виде привычного, аккуратно оформленного текста, без обозначений переноса строки, но с самими переносами и т.д.
 
-# In[66]:
+# In[19]:
 
 
-print(data)
+pd.DataFrame(data["data"], columns = data["feature_names"]).head()
 
 
 # In[67]:
@@ -164,46 +254,52 @@ data["target_names"]
 # На основе данных датасета (они содержатся в двумерном массиве Numpy) и названий признаков создайте датафрейм под названием X.
 # 
 
-# In[81]:
+# In[20]:
 
 
-f_n = data["feature_names"]
-data_w = data["data"]
-X = pd.DataFrame(data_w, columns=f_n)
+X = pd.DataFrame(data["data"], columns = data["feature_names"])
 
 
 # #### 6). 
 # Выясните размер датафрейма X и установите, имеются ли в нем пропущенные значения.
 
-# In[80]:
+# In[21]:
 
 
 X.shape
 
 
-# In[83]:
+# In[22]:
 
 
 X.info()
 
 
-# In[88]:
+# In[23]:
 
 
-"no missing values"
+###no missing values
 
 
 # #### 7). 
 # Добавьте в датафрейм поле с классами вин в виде чисел, имеющих тип данных numpy.int64. Название поля - 'target'.
 
-# In[ ]:
+# In[54]:
 
 
-
+X.loc[:, "target"] = np.int64(data["target"])
+X.head(100)
 
 
 # #### 8). 
 # Постройте матрицу корреляций для всех полей X. Дайте полученному датафрейму название X_corr.
+
+# In[58]:
+
+
+X_corr = X.corr()
+X_corr
+
 
 # #### 9). 
 # Создайте список high_corr из признаков, корреляция которых с полем target по абсолютному значению превышает 0.5 (причем, само поле target не должно входить в этот список).

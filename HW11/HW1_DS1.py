@@ -3,7 +3,6 @@
 
 # In[1]:
 
-
 import numpy as np
 import pandas as pd
 from sklearn.svm import SVC
@@ -12,30 +11,22 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import confusion_matrix
 
-
 # In[2]:
-
 
 DATASET_PATH = './training_project_data.csv'
 #PREP_DATASET_PATH = './data/training_project_data_prep.csv'
 
-
 # In[3]:
-
 
 df = pd.read_csv(DATASET_PATH)
 df.head()
 
-
 # In[4]:
-
 
 X_train, X_valid, y_train, y_valid = train_test_split(df.drop(['NEXT_MONTH_DEFAULT'], 
                        axis = 'columns'), df['NEXT_MONTH_DEFAULT'], test_size=0.2, random_state=21)
 
-
 # In[5]:
-
 
 scaler = MinMaxScaler()
 
